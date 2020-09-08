@@ -1,0 +1,60 @@
+==============================================================================================
+
+Getting AD account by filter:
+
+get-aduser -filter {samaccountname -like '*-*'} | select company
+get-adgroup -identity 'xxxx'
+
+Get-ADPrincipalGroupMembership -Identity xxxxx | select Name, distinguishedname | Format-Table -AutoSize
+
+#szuka ou
+get-adorganizationalunit -filter 'Name -like "xxxxxx"' | Format-Table Name, DistinguishedName -A
+#szuka wszystkie ou w głównym ou
+Get-ADOrganizationalUnit -SearchBase "OU=xxxx,DC=te,DC=t,DC=test" -SearchScope Subtree -Filter * | Select-Object DistinguishedName, Name
+
+$creds = New-Object System.Management.Automation.PsCredential -ArgumentList $username, $pass
+Get-ADUser -Filter {samaccountname -eq 'xxxxxx'} -server <ip> -searchbase 'DC=test,DC=test' -Credential $creds -Properties *
+
+##############
+cls
+# below use only once
+#$credential = Get-Credential
+#$credential.Password | ConvertFrom-SecureString | Set-Content C:\Users\test\Desktop\scriptsencrypted_password.txt
+
+$username = "test"
+$encrypted = Get-Content C:\Users\test\Desktop\scriptsencrypted_password.txt | ConvertTo-SecureString
+$creds = New-Object System.Management.Automation.PsCredential($username, $encrypted)
+
+(Get-ADObject -Filter * -SearchBase 'OU=test,DC=test,DC=test' -server <ip> -Credential $creds ).Count
+#Get-ADUser -Filter {samaccountname -eq 'test'} -server <ip> -searchbase 'DC=test,DC=test' -Credential $creds -Properties *
+##############
+
+get-aduser -filter 'samaccountname -like "xxxxxxx"' | Select-Object samaccountname, employeenumber
+(Get-ADUser xxxxxxxxx -Properties HomeDirectory).HomeDirectory -server 'test.com'
+Get-ADUser -identity 'xxxxx' -Properties samaccountname, employeenumber,cn,distinguishedname -server 'test.test'
+
+Get-ADUser -Filter "UserPrincipalName -eq 'test'" -server 'test.com'
+
+get-aduser xxxxx -server test.com -Properties proxyaddresses | % proxyaddresses
+get-aduser xxxxx -server test.com -Properties proxyaddresses | %{write-host "test"}{$_.proxyaddresses}{Write-Host "done"}
+
+
+([adsisearcher]"(samaccountname=$env:USERNAME)").FindOne().Properties.memberof
+ 
+#Display DN of groups
+(Get-ADUser xxxxx -Properties memberof).memberof
+ 
+#Display DN of groups and copy results to clipboard
+(Get-ADUser xxxxxxx -Properties memberof).memberof | clip
+ 
+#Display name of groups
+((Get-ADUser xxxxxxxx -Properties memberof).memberof | Get-ADGroup).name
+ 
+#Pass output from memberof parameter and get information about this AD Object
+((Get-ADUser xxxxxxxx -Properties memberof).memberof | Get-ADObject) | Select Name,ObjectClass | Sort-Object Name 
+ 
+#Get detailed information about groups and format output
+((Get-ADUser xxxxxxxx -Properties memberof).memberof | Get-ADGroup) | Select Name,GroupCategory,GroupScope| Sort-Object Name | Format-Table -AutoSize -Wrap
+
+
+
