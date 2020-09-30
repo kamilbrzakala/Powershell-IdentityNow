@@ -1,3 +1,18 @@
+REST
+
+Basic authorization:
+If the Basic authentication scheme is used, the <credentials> are constructed like this:
+
+the username and the password are combined with a colon (student:ilovetostudy);
+the resulting string is base64 encoded (c3R1ZGVudDppbG92ZXRvc3R1ZHk=).
+
+$username = 'test'
+$password = 'password'
+$base64AuthInfo = [convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1} -f $username, $password")))
+$base64AuthInfo
+
+
+
 ==============================================================================================
 
 Getting AD account by filter:
