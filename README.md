@@ -1,3 +1,3 @@
 # Powershell
 
-Setup config.json somewhere and update path in the get-config.ps1
+Setup config.json on the disk and update path in the get-config.ps1
