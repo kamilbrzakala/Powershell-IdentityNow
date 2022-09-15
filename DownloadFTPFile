@@ -5,11 +5,11 @@ Function Get-DownloadFTPFile {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string]$fileName,
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [string]$sourceName
+        [string]$folderName
     )
 
     $source = 'ftp://<ftp.dns.com>', $fileName -join "/"
-    $target = (Get-DefaultPath), (Get-Config | ForEach-Object { $_.csv_folder}), $sourceName, 'TO_VALIDATE', $fileName -join "\"
+    $target = (Get-DefaultPath), (Get-Config | ForEach-Object { $_.csv_folder}), $folderName, $fileName -join "\"
     $password = Microsoft.PowerShell.Security\ConvertTo-SecureString -String (Get-Config | ForEach-Object { $_.ftp_password}) -AsPlainText -Force
     $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList (Get-Config | Select-Object { $_.ftp_user}), $password
 
