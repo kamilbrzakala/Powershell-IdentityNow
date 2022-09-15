@@ -1,5 +1,6 @@
-Function Get-ListOfFTPFiles {
+Function Get-ListOfFilesInFolder {
 
+   
     [cmdletbinding()]
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
@@ -9,7 +10,7 @@ Function Get-ListOfFTPFiles {
     $username  = Get-Config | ForEach-Object {$_.ftp_user}
     $password  = Get-Config | ForEach-Object {$_.ftp_password}
     $ftp       = Get-Config | ForEach-Object {$_.ftp_address}
-    $subfolder = '/otherfolder/'
+    $subfolder = '/someParentFolder/', $folder -join "/"
 
     $ftpuri = $ftp + $subfolder
     $uri=[system.URI] $ftpuri
@@ -21,6 +22,19 @@ Function Get-ListOfFTPFiles {
     $reader=New-Object System.IO.StreamReader($strm,'UTF-8')
     $list=$reader.ReadToEnd()
     $lines=$list.Split("`n")
-    return $lines
 
+    $out = @()
+    $objectsList = @()
+    
+    foreach($line in $lines){
+        if($line){
+            $objectsList += [PSCustomObject]@{
+                source = $folder
+                fileName = $line # .replace("Input/","") # optionally execute replace
+            }
+            $out += $folder,$line -join "/"
+        }
+    }
+    #return $out
+    return $objectsList
 }
