@@ -5,7 +5,7 @@ Function Set-FolderStructure {
 
 .DESCRIPTION
     <ParentFolder: SOURCE_NAME>
-                                    <ChildFolder: TO_VALID>
+                                    <ChildFolder: TO_VALIDATE>
                                     <ChildFolder: TO_IMPORT>
                                     <ChildFolder: TO_CORRECT>
     
