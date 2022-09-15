@@ -1,4 +1,4 @@
-Function Get-ListOfFiles {
+Function Get-ListOfFTPFiles {
 
     [cmdletbinding()]
     param(
