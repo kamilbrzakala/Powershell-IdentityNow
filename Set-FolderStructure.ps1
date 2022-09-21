@@ -5,9 +5,7 @@ Function Set-FolderStructure {
 
 .DESCRIPTION
     <ParentFolder: SOURCE_NAME>
-                                    <ChildFolder: TO_VALIDATE>
-                                    <ChildFolder: TO_IMPORT>
-                                    <ChildFolder: TO_CORRECT>
+                                    <ChildFolder: child folder>
     
 .EXAMPLE
 
@@ -24,11 +22,9 @@ Function Set-FolderStructure {
     If(!(test-path -PathType container $path))
     {
           New-Item -ItemType Directory -Path $path, $parentFolder -join "\"
-          
+          New-Item -ItemType Directory -Path ($path, $parentFolder, 'child folder' -join "\")
     }
-          New-Item -ItemType Directory -Path ($path, $parentFolder, 'TO_VALIDATE' -join "\")
-          New-Item -ItemType Directory -Path  ($path, $parentFolder, 'TO_IMPORT' -join "\")
-          New-Item -ItemType Directory -Path  ($path, $parentFolder, 'TO_CORRECT' -join "\")
+          
 
 
 }
