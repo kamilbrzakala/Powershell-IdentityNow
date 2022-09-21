@@ -1,40 +1,50 @@
 Function Get-ListOfFilesInFolder {
 
-   
     [cmdletbinding()]
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string]$folder
     )
 
-    $username  = Get-Config | ForEach-Object {$_.ftp_user}
-    $password  = Get-Config | ForEach-Object {$_.ftp_password}
-    $ftp       = Get-Config | ForEach-Object {$_.ftp_address}
-    $subfolder = '/someParentFolder/', $folder -join "/"
-
+    $username  = (Get-Config).ftp_user
+    $password  = (Get-Config).ftp_password
+    $ftp       = (Get-Config).ftp_address
+    $subfolder = '/other/', $folder, 'Input' -join "/"
     $ftpuri = $ftp + $subfolder
     $uri=[system.URI] $ftpuri
+
     $ftprequest=[system.net.ftpwebrequest]::Create($uri)
     $ftprequest.Credentials=New-Object System.Net.NetworkCredential($username,$password)
-    $ftprequest.Method=[system.net.WebRequestMethods+ftp]::ListDirectory
+    #$ftprequest.Method=[system.net.WebRequestMethods+ftp]::ListDirectory
+    $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectoryDetails
     $response=$ftprequest.GetResponse()
     $strm=$response.GetResponseStream()
     $reader=New-Object System.IO.StreamReader($strm,'UTF-8')
     $list=$reader.ReadToEnd()
-    $lines=$list.Split("`n")
 
-    $out = @()
-    $objectsList = @()
-    
-    foreach($line in $lines){
-        if($line){
-            $objectsList += [PSCustomObject]@{
+    $li=$list.Split("`n")
+    $li = $li[1..($li.length - 2)] # ignore 1st index from array because is not needed
+
+    $arrayList = @()
+
+    foreach($item in $li){
+        
+        if($item){
+            $left = $item[0..48] -join ""
+            $right = $item[49..($item.length - 1)] -join ""
+            [string]$dateModified = ($right[0..12] -join "").trim()
+            [string]$fileName = $right[13..($item.length - 1)] -join ""
+
+            $arrayList += [PSCustomObject]@{
                 source = $folder
-                fileName = $line # .replace("Input/","") # optionally execute replace
+                fileName = $fileName
+                filePath = $folder, "Input/", $fileName -join "/"
+                dateModified = $dateModified
             }
-            $out += $folder,$line -join "/"
         }
     }
-    #return $out
-    return $objectsList
+
+    $orderedArray = $arrayList | Sort-Object -Property dateModified -Descending # get latest file
+
+    return $orderedArray[0]
 }
