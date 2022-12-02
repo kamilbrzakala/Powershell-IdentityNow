@@ -1,4 +1,4 @@
-Function DownloadFTPFile {
+Function Download-FTP-File-Invoke-WebRequest {
 
     [cmdletbinding()]
     param(
