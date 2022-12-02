@@ -1,4 +1,4 @@
-Function Get-ListOfFilesInFolder {
+Function Get-List-FTP-Files {
 
     [cmdletbinding()]
     param(
